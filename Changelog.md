@@ -2,7 +2,7 @@
 
 All notable changes to `fastafiles.py` will be documented in this file.
 
-## [0.2.0] - 2025-11-25
+## [0.2.0] - 2025-11-25 - Improvements made by Alan Rockefeller
 
 ### Added
 - Command-line interface using `argparse` 
