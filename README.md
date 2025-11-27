@@ -15,7 +15,13 @@ It is designed for easy batch-downloads of nucleotide sequences for phylogenetic
 - Python 3.x  
 - [Biopython](https://biopython.org/) — make sure it is installed (`pip install biopython`)  
 
+## TO-DO
+
+- Default to ITS if no user input is given
+- Add a "confirmed observation mode" that only gets records that have inaturalist or mushroomobserver links with photos  
+- BLAST mode that returns the top 100 results from a known observation
+ 
 ## Usage
 
 ```bash
-python fastafiles.py 'Your_query_here' --email youremail@mail.com --max-results 9000 --debug 
+python fastafiles.py 'Your_query_here' --email youremail@mail.com --max-results 9000
