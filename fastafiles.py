@@ -1,8 +1,9 @@
-
 from Bio import Entrez, SeqIO
 from Bio.Seq import UndefinedSequenceError
 import time
 import argparse
+import os
+import sys
 
 def main():
     parser = argparse.ArgumentParser(
@@ -30,6 +31,11 @@ def main():
         formatter_class=argparse.RawTextHelpFormatter # Use RawTextHelpFormatter to preserve newlines in epilog
     )
     parser.add_argument(
+        '--email',
+        default=os.environ.get('ENTREZ_EMAIL'),
+        help="Email address for NCBI Entrez (required by NCBI policy). Can also set ENTREZ_EMAIL env var."
+    )
+    parser.add_argument(
         'query_terms',
         nargs='*',
         help=(
@@ -42,6 +48,12 @@ def main():
         )
     )
     parser.add_argument(
+        '--max-results',
+        type=int,
+        default=10,
+        help="Maximum number of sequences to retrieve (default: 10, max: 10000)"
+    )
+    parser.add_argument(
         '--debug',
         action='store_true',
         help=(
@@ -52,7 +64,12 @@ def main():
             "for troubleshooting or understanding the script's internal operations."
         )
     )
+    
     args = parser.parse_args()
+	
+    if not args.email:
+        print("Error: Please provide an email address via --email or ENTREZ_EMAIL environment variable.")
+        sys.exit(1)
 
     #*************DEFINES*************
     def remove_spaces(filepath):
@@ -66,11 +83,11 @@ def main():
             f.writelines(modified_lines)
     #************/DEFINES*************
 
-    # Yo NCBI dis is me
-    Entrez.email = "justarandomemailaddress@gmail.com"
+    # NCBI Email
+    Entrez.email = args.email
 
     # search for a gene or sequence or both with AND ie "your thing AND ITS1"
-    query = " ".join(args.query_terms) if args.query_terms else "psilocybe zapotecorum AND ITS1"
+    query = " ".join(args.query_terms) if args.query_terms else "psilocybe zapotecorum ITS"
     if args.debug:
         print(f"DEBUG: Sending query: '{query}'")
 
@@ -78,7 +95,7 @@ def main():
     # TODO - search for "AND" and continue or default to ITS
 
     # Search NCBI database - retmax == results , up to 10,000 :0 
-    search_handle = Entrez.esearch(db="nucleotide", term=query, retmax=8)
+    search_handle = Entrez.esearch(db="nucleotide", term=query, retmax=args.max_results)
     search_results = Entrez.read(search_handle)
     search_handle.close()
     if args.debug:
@@ -159,12 +176,13 @@ def main():
         )
 
         fasta_records.append(new_record)
+		
 
-    # Save dat shit
+    # Save file
     with open(filename, "w") as out_file:
         SeqIO.write(fasta_records, out_file, "fasta")
 
-    # Edit dat shit - Replace spaces with _ otherwise MEGA and others mess with the name
+    # Edit file - Replace spaces with _ otherwise MEGA and others mess with the name
     remove_spaces(filename)
     # TODO - clean up records to include just names,gene,location & filename to disclude "AND" 
 

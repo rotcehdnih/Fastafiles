@@ -2,6 +2,16 @@
 
 All notable changes to `fastafiles.py` will be documented in this file.
 
+## [0.3.0] - 2025-11-27 - ENTREZ_EMAIL Compliance  
+
+### Added
+- Command-line
+- `--email` Email address for NCBI Entrez (required by NCBI policy). Can also set ENTREZ_EMAIL env var.
+- `--max-results` Maximum number of sequences to retrieve (default: 10, max: 10000).
+
+### Changed
+- This `Changelog.md` file.
+
 ## [0.2.0] - 2025-11-25 - Improvements made by Alan Rockefeller
 
 ### Added
